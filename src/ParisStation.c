@@ -1,8 +1,8 @@
 #include <pebble.h>
 
-static Window *window;
+static Window *stationsWindow;
 
-static MenuLayer *menu_layer;
+static MenuLayer *stationsMenuLayer;
 
 static AppSync s_sync;
 static uint8_t s_sync_buffer[64];
@@ -33,33 +33,7 @@ char *translate_error(AppMessageResult result) {
 }
 
 static char stations[5][128]; 
-static int currentIndex = 0;
-
-// menu layer
-static uint16_t menu_get_num_sections_callback(MenuLayer *menu_layer, void *data) {
-  return 1;
-}
-
-static uint16_t menu_get_num_rows_callback(MenuLayer *menu_layer, uint16_t section_index, void *data) {
-  return ARRAY_LENGTH(stations);
-}
-
-static int16_t menu_get_header_height_callback(MenuLayer *menu_layer, uint16_t section_index, void *data) {
-  return MENU_CELL_BASIC_HEADER_HEIGHT;
-}
-
-static void menu_draw_header_callback(GContext* ctx, const Layer *cell_layer, uint16_t section_index, void *data) {
-  menu_cell_basic_header_draw(ctx, cell_layer, "Stations");
-}
-
-static void menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuIndex *cell_index, void *data) {
-  // menu_cell_basic_draw(ctx, cell_layer, "Test", NULL, NULL);
-  menu_cell_title_draw(ctx, cell_layer, stations[cell_index->row]);
-}
-
-static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *data) {
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Select %i", cell_index->row);
-}
+static int stationsIndex = 0;
 
 // app sync
 static void sync_error_callback(DictionaryResult dict_error, AppMessageResult app_message_error, void *context) {
@@ -69,18 +43,17 @@ static void sync_error_callback(DictionaryResult dict_error, AppMessageResult ap
 static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) {
   switch(key) {
     case NEW_STATION_KEY: {
-      APP_LOG(APP_LOG_LEVEL_DEBUG, "size %i", strlen(new_tuple->value->cstring));
       if (strlen(new_tuple->value->cstring) > 0) {
         APP_LOG(APP_LOG_LEVEL_DEBUG, "new station key: %s", new_tuple->value->cstring);
-        snprintf(stations[currentIndex], sizeof(stations[currentIndex]), new_tuple->value->cstring);
-        currentIndex++;
+        snprintf(stations[stationsIndex], sizeof(stations[stationsIndex]), new_tuple->value->cstring);
+        stationsIndex++;
       }
       break;
     }
     case END_STATIONS_KEY: {
       if (new_tuple->value->uint8 > 0) {
         APP_LOG(APP_LOG_LEVEL_DEBUG, "reloading menu layer");
-        menu_layer_reload_data(menu_layer);
+        menu_layer_reload_data(stationsMenuLayer);
       }
       break;
     }
@@ -90,25 +63,50 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
   }
 }
 
+// menu layer
+static uint16_t stations_menu_get_num_sections_callback(MenuLayer *menu_layer, void *data) {
+  return 1;
+}
+
+static uint16_t stations_menu_get_num_rows_callback(MenuLayer *menu_layer, uint16_t section_index, void *data) {
+  return ARRAY_LENGTH(stations);
+}
+
+static int16_t stations_menu_get_header_height_callback(MenuLayer *menu_layer, uint16_t section_index, void *data) {
+  return MENU_CELL_BASIC_HEADER_HEIGHT;
+}
+
+static void stations_menu_draw_header_callback(GContext* ctx, const Layer *cell_layer, uint16_t section_index, void *data) {
+  menu_cell_basic_header_draw(ctx, cell_layer, "Stations");
+}
+
+static void stations_menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuIndex *cell_index, void *data) {
+  menu_cell_title_draw(ctx, cell_layer, stations[cell_index->row]);
+}
+
+static void stations_menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *data) {
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Select %i", cell_index->row);
+}
+
 // window
-static void window_load(Window *window) {
+static void stations_window_load(Window *window) {
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_bounds(window_layer);
 
-  menu_layer = menu_layer_create(bounds);
+  stationsMenuLayer = menu_layer_create(bounds);
 
-  menu_layer_set_callbacks(menu_layer, NULL, (MenuLayerCallbacks){
-    .get_num_sections = menu_get_num_sections_callback,
-    .get_num_rows = menu_get_num_rows_callback,
-    .get_header_height = menu_get_header_height_callback,
-    .draw_header = menu_draw_header_callback,
-    .draw_row = menu_draw_row_callback,
-    .select_click = menu_select_callback,
+  menu_layer_set_callbacks(stationsMenuLayer, NULL, (MenuLayerCallbacks){
+    .get_num_sections = stations_menu_get_num_sections_callback,
+    .get_num_rows = stations_menu_get_num_rows_callback,
+    .get_header_height = stations_menu_get_header_height_callback,
+    .draw_header = stations_menu_draw_header_callback,
+    .draw_row = stations_menu_draw_row_callback,
+    .select_click = stations_menu_select_callback,
   });
 
-  menu_layer_set_click_config_onto_window(menu_layer, window);
+  menu_layer_set_click_config_onto_window(stationsMenuLayer, window);
 
-  layer_add_child(window_layer, menu_layer_get_layer(menu_layer));
+  layer_add_child(window_layer, menu_layer_get_layer(stationsMenuLayer));
 
   app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
 
@@ -122,33 +120,32 @@ static void window_load(Window *window) {
       sync_tuple_changed_callback, sync_error_callback, NULL);
 }
 
-static void window_unload(Window *window) {
+static void stations_window_unload(Window *window) {
 
-  menu_layer_destroy(menu_layer);
+  menu_layer_destroy(stationsMenuLayer);
 }
 
 // init/deinit
 static void init(void) {
-  window = window_create();
-  window_set_window_handlers(window, (WindowHandlers) {
-    .load = window_load,
-    .unload = window_unload,
+  stationsWindow = window_create();
+  window_set_window_handlers(stationsWindow, (WindowHandlers) {
+    .load = stations_window_load,
+    .unload = stations_window_unload,
   });
   const bool animated = true;
-  window_stack_push(window, animated);
+  window_stack_push(stationsWindow, animated);
+
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Done initializing, pushed window: %p", stationsWindow);
 }
 
 static void deinit(void) {
-  window_destroy(window);
+  window_destroy(stationsWindow);
   app_sync_deinit(&s_sync);
 }
 
 // main
 int main(void) {
   init();
-
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Done initializing, pushed window: %p", window);
-
   app_event_loop();
   deinit();
 }
