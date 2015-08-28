@@ -10,7 +10,8 @@
     "watchface": false
   },
   "appKeys": {
-    "dummy": 0
+    "NEW_STATION_KEY": 0,
+    "END_STATIONS_KEY": 1
   },
   "resources": {
     "media": []

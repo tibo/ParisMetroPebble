@@ -1,11 +1,29 @@
 var baseURL = 'https://secure-atoll-4691.herokuapp.com';
 
+var messagesQueue = Array();
+
+function sendNextMessage(){
+  if (messagesQueue.length == 0)
+    return;
+
+  var message = messagesQueue[0];
+  
+  Pebble.sendAppMessage(message, 
+    function(data){
+      messagesQueue.shift();
+      sendNextMessage();
+    }, 
+    function(data, error) {
+      sendNextMessage();
+    });
+};
+
 function fetchStations(latitude, longitude) {
 
   var url = baseURL + '/metro/stations';
 
   if (latitude && longitude) {
-    url = url + '?ll=' + latitude + ',' + longitude;
+    url = url + '?ll=' + latitude + ',' + longitude + '&limit=5';
   }
 
   var req = new XMLHttpRequest();
@@ -13,9 +31,15 @@ function fetchStations(latitude, longitude) {
   req.onload = function () {
     if (req.readyState === 4) {
       if (req.status === 200) {
-        console.log(req.responseText);
+        // console.log(req.responseText);
         var response = JSON.parse(req.responseText);
-        Pebble.sendAppMessage(response);
+        var stations = response['stations']
+        stations.forEach(function(station){
+          messagesQueue.push({'NEW_STATION_KEY' : station.key});
+        });
+        messagesQueue.push({'END_STATIONS_KEY' : 1});
+
+        sendNextMessage();
       } 
       else {
         console.log('Error');
@@ -35,9 +59,6 @@ function locationError(err) {
 
 Pebble.addEventListener("ready",
     function(e) {
-      console.log('ready from js');
-
-      return;
       var locationOptions = {
         'timeout': 15000,
         'maximumAge': 60000
