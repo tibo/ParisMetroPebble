@@ -10,8 +10,6 @@ static void init(void) {
 }
 
 static void deinit(void) {
-  // window_destroy(stationsWindow);
-  // app_sync_deinit(&s_sync);
 }
 
 // main

@@ -122,7 +122,7 @@ static void stations_window_load(Window *window) {
 }
 
 static void stations_window_unload(Window *window) {
-
+  app_sync_deinit(&s_sync);
   menu_layer_destroy(stationsMenuLayer);
   window_destroy(window);
 }
