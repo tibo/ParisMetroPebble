@@ -1,4 +1,5 @@
 #include <pebble.h>
+#include "DestinationsWindow.c.inc"
 
 static Window *stationsWindow;
 
@@ -85,7 +86,9 @@ static void stations_menu_draw_row_callback(GContext* ctx, const Layer *cell_lay
 }
 
 static void stations_menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *data) {
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Select %i", cell_index->row);
+  // APP_LOG(APP_LOG_LEVEL_DEBUG, "Select %i", cell_index->row);
+  Window *destinationsWindow = init_destinations_window(stations[cell_index->row]);
+  window_stack_push(destinationsWindow, true);
 }
 
 // window
