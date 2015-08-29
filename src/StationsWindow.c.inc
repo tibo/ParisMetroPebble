@@ -1,15 +1,11 @@
 #include "DestinationsWindow.c.inc"
+#include "Constants.h"
 
 static Window *stationsWindow;
 static MenuLayer *stationsMenuLayer;
 
 static AppSync s_sync;
 static uint8_t s_sync_buffer[64];
-
-enum NotificationsKey {
-  NEW_STATION_KEY = 0x0,
-  END_STATIONS_KEY = 0x1
-};
 
 char *translate_error(AppMessageResult result) {
   switch (result) {

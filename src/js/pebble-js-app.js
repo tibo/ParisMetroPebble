@@ -57,12 +57,18 @@ function locationError(err) {
   fetchStations();
 }
 
-Pebble.addEventListener("ready",
-    function(e) {
+Pebble.addEventListener("ready", function(e) {
       var locationOptions = {
         'timeout': 15000,
         'maximumAge': 60000
       };
       window.navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
-    }
-);
+});
+
+Pebble.addEventListener('appmessage', function(e) {
+  console.log('AppMessage received: ' + JSON.stringify(e.payload));
+  
+  if (e.payload['SELECTED_STATION_KEY']) {
+    console.log('selected station: ' + e.payload['SELECTED_STATION_KEY']);
+  };
+});

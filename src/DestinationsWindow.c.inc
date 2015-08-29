@@ -1,3 +1,4 @@
+#include "Constants.h"
 
 static Window *destinationsWindow;
 static MenuLayer *destinationsMenuLayer;
@@ -50,10 +51,14 @@ static void destinations_window_load(Window *window) {
   menu_layer_set_click_config_onto_window(destinationsMenuLayer, window);
 
   layer_add_child(window_layer, menu_layer_get_layer(destinationsMenuLayer));
+
+  DictionaryIterator *outbox;
+  app_message_outbox_begin(&outbox);
+  dict_write_cstring(outbox, SELECTED_STATION_KEY, selectedStationKey);
+  app_message_outbox_send();
 }
 
 static void destinations_window_unload(Window *window) {
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "unload test window %p",window);
   menu_layer_destroy(destinationsMenuLayer);
   window_destroy(window);
 }

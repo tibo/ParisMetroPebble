@@ -11,7 +11,8 @@
   },
   "appKeys": {
     "NEW_STATION_KEY": 0,
-    "END_STATIONS_KEY": 1
+    "END_STATIONS_KEY": 1,
+    "SELECTED_STATION_KEY": 2
   },
   "resources": {
     "media": []
