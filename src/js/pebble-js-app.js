@@ -1,6 +1,6 @@
-var baseURL = 'https://secure-atoll-4691.herokuapp.com';
-
+// events queue
 var messagesQueue = Array();
+var numberOfRetry = 5;
 
 function sendNextMessage(){
   if (messagesQueue.length == 0)
@@ -10,13 +10,22 @@ function sendNextMessage(){
   
   Pebble.sendAppMessage(message, 
     function(data){
+      console.log('message sent with success');
       messagesQueue.shift();
+      numberOfRetry = 5;
       sendNextMessage();
     }, 
-    function(data, error) {
-      sendNextMessage();
+    function(data) {
+      console.log('error sending message: ' + data.data.error.message);
+      numberOfRetry --;
+      if (numberOfRetry > 0) {
+        sendNextMessage();
+      }
     });
 };
+
+// API
+var baseURL = 'https://secure-atoll-4691.herokuapp.com';
 
 function fetchStations(latitude, longitude) {
 
@@ -49,6 +58,40 @@ function fetchStations(latitude, longitude) {
   req.send(null);
 }
 
+function fetchLinesForStation(station_key) {
+  var url = baseURL + '/metro/stations/' + station_key.replace(/ /g,'%20') + '/lines';
+
+  console.log('fetching lines: ' + url);
+
+  var req = new XMLHttpRequest();
+  req.open('GET', url, true);
+  req.onload = function () {
+    if (req.readyState === 4) {
+      if (req.status === 200) {
+        console.log(req.responseText);
+        var response = JSON.parse(req.responseText);
+        var lines = response['lines']
+        lines.forEach(function(line){
+          messagesQueue.push({'NEW_LINE_KEY' : line.line});
+          var destinations = line['destinations'];
+          destinations.forEach(function(destination){
+            messagesQueue.push({'NEW_DESTINATION_NAME_KEY' : destination.name});
+            messagesQueue.push({'NEW_DESTINATION_DIRECTION_KEY' : destination.direction});
+          });
+        });
+        messagesQueue.push({'END_STATIONS_KEY' : 1});
+
+        sendNextMessage();
+      } 
+      else {
+        console.log('Error');
+      }
+    }
+  };
+  req.send(null);
+}
+
+// geolocation
 function locationSuccess(pos) {
   fetchStations(pos.coords.latitude, pos.coords.longitude);
 }
@@ -57,6 +100,7 @@ function locationError(err) {
   fetchStations();
 }
 
+// event observers
 Pebble.addEventListener("ready", function(e) {
       var locationOptions = {
         'timeout': 15000,
@@ -67,8 +111,8 @@ Pebble.addEventListener("ready", function(e) {
 
 Pebble.addEventListener('appmessage', function(e) {
   console.log('AppMessage received: ' + JSON.stringify(e.payload));
-  
+
   if (e.payload['SELECTED_STATION_KEY']) {
-    console.log('selected station: ' + e.payload['SELECTED_STATION_KEY']);
-  };
+    fetchLinesForStation(e.payload['SELECTED_STATION_KEY']);
+  }
 });

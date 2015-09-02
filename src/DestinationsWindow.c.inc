@@ -1,4 +1,4 @@
-#include "Constants.h"
+#include "appmessage.h"
 
 static Window *destinationsWindow;
 static MenuLayer *destinationsMenuLayer;
