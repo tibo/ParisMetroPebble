@@ -45,6 +45,7 @@ function fetchStations(latitude, longitude) {
         var stations = response['stations']
         stations.forEach(function(station){
           messagesQueue.push({'NEW_STATION_KEY' : station.key});
+          messagesQueue.push({'NEW_STATION_NAME' : station.name});
         });
         messagesQueue.push({'END_STATIONS_KEY' : 1});
 

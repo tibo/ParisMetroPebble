@@ -1,9 +1,10 @@
 #include "DestinationsWindow.c.inc"
+#include "station.h"
 
 static Window *stationsWindow;
 static MenuLayer *stationsMenuLayer;
 
-static char stations[5][128]; 
+static Station stations[5]; 
 static int stationsIndex = 0;
 
 // menu layer
@@ -24,12 +25,12 @@ static void stations_menu_draw_header_callback(GContext* ctx, const Layer *cell_
 }
 
 static void stations_menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuIndex *cell_index, void *data) {
-  menu_cell_title_draw(ctx, cell_layer, stations[cell_index->row]);
+  menu_cell_title_draw(ctx, cell_layer, stations[cell_index->row].name);
 }
 
 static void stations_menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *data) {
   // APP_LOG(APP_LOG_LEVEL_DEBUG, "Select %i", cell_index->row);
-  Window *destinationsWindow = init_destinations_window(stations[cell_index->row]);
+  Window *destinationsWindow = init_destinations_window(stations[cell_index->row].key);
   window_stack_push(destinationsWindow, true);
 }
 

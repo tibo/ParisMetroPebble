@@ -10,9 +10,14 @@ void message_received(DictionaryIterator *iter, void *context) {
       case NEW_STATION_KEY: {
         if (strlen(tuple->value->cstring) > 0) {
           APP_LOG(APP_LOG_LEVEL_DEBUG, "new station key: %s", tuple->value->cstring);
-          snprintf(stations[stationsIndex], sizeof(stations[stationsIndex]), tuple->value->cstring);
-          stationsIndex++;
+          snprintf(stations[stationsIndex].key, sizeof(stations[stationsIndex]), tuple->value->cstring);
         }
+        break;
+      }
+      case NEW_STATION_NAME: {
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "new station name: %s", tuple->value->cstring);
+        snprintf(stations[stationsIndex].name, sizeof(stations[stationsIndex]), tuple->value->cstring);
+        stationsIndex++;
         break;
       }
       case END_STATIONS_KEY: {
