@@ -1,17 +1,22 @@
 #include "appmessage.h"
+#include "line.h"
 
 static Window *destinationsWindow;
 static MenuLayer *destinationsMenuLayer;
 
 static char *selectedStationKey;
 
+static Line lines[5];
+static int linesIndex;
+static int directionsIndex;
+
 // menu layer
 static uint16_t destinations_menu_get_num_sections_callback(MenuLayer *menu_layer, void *data) {
-  return 1;
+  return ARRAY_LENGTH(lines);
 }
 
 static uint16_t destinations_menu_get_num_rows_callback(MenuLayer *menu_layer, uint16_t section_index, void *data) {
-  return 5;
+  return ARRAY_LENGTH(lines[section_index].destinations);
 }
 
 static int16_t destinations_menu_get_header_height_callback(MenuLayer *menu_layer, uint16_t section_index, void *data) {
@@ -19,11 +24,11 @@ static int16_t destinations_menu_get_header_height_callback(MenuLayer *menu_laye
 }
 
 static void destinations_menu_draw_header_callback(GContext* ctx, const Layer *cell_layer, uint16_t section_index, void *data) {
-  menu_cell_basic_header_draw(ctx, cell_layer, selectedStationKey);
+  menu_cell_basic_header_draw(ctx, cell_layer, lines[section_index].name);
 }
 
 static void destinations_menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuIndex *cell_index, void *data) {
-  menu_cell_title_draw(ctx, cell_layer, "Test");
+  menu_cell_title_draw(ctx, cell_layer, lines[cell_index->section].destinations[cell_index->row].name);
 }
 
 static void destinations_menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *data) {
@@ -51,6 +56,9 @@ static void destinations_window_load(Window *window) {
   menu_layer_set_click_config_onto_window(destinationsMenuLayer, window);
 
   layer_add_child(window_layer, menu_layer_get_layer(destinationsMenuLayer));
+
+  linesIndex = 0;
+  directionsIndex = 0;
 
   DictionaryIterator *outbox;
   app_message_outbox_begin(&outbox);

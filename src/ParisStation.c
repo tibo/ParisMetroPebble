@@ -30,18 +30,24 @@ void message_received(DictionaryIterator *iter, void *context) {
       case NEW_LINE_KEY : {
         if (strlen(tuple->value->cstring) > 0) {
           APP_LOG(APP_LOG_LEVEL_DEBUG, "new line: %s", tuple->value->cstring);
+          snprintf(lines[linesIndex].name, sizeof(lines[linesIndex]), tuple->value->cstring);
+          linesIndex++;
+          directionsIndex = 0;
         }
         break;
       }
       case NEW_DESTINATION_NAME_KEY : {
         if (strlen(tuple->value->cstring) > 0) {
           APP_LOG(APP_LOG_LEVEL_DEBUG, "new destination name: %s", tuple->value->cstring);
+          snprintf(lines[linesIndex-1].destinations[directionsIndex].name, sizeof(lines[linesIndex-1].destinations[directionsIndex]), tuple->value->cstring);
         }
         break;
       }
       case NEW_DESTINATION_DIRECTION_KEY : {
         if (strlen(tuple->value->cstring) > 0) {
           APP_LOG(APP_LOG_LEVEL_DEBUG, "new destination: %s", tuple->value->cstring);
+          snprintf(lines[linesIndex-1].destinations[directionsIndex].direction, sizeof(lines[linesIndex-1].destinations[directionsIndex]), tuple->value->cstring);
+          directionsIndex++;
         }
         break;
       }
