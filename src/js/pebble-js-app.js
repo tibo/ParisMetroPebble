@@ -4,13 +4,15 @@ var numberOfRetry = 5;
 
 function sendNextMessage(){
   if (messagesQueue.length == 0)
+  {
+    console.log('empty message queue');
     return;
+  }
 
   var message = messagesQueue[0];
   
   Pebble.sendAppMessage(message, 
     function(data){
-      console.log('message sent with success');
       messagesQueue.shift();
       numberOfRetry = 5;
       sendNextMessage();
@@ -62,14 +64,11 @@ function fetchStations(latitude, longitude) {
 function fetchLinesForStation(station_key) {
   var url = baseURL + '/metro/stations/' + station_key.replace(/ /g,'%20') + '/lines';
 
-  console.log('fetching lines: ' + url);
-
   var req = new XMLHttpRequest();
   req.open('GET', url, true);
   req.onload = function () {
     if (req.readyState === 4) {
       if (req.status === 200) {
-        console.log(req.responseText);
         var response = JSON.parse(req.responseText);
         var lines = response['lines']
         lines.forEach(function(line){
@@ -80,7 +79,7 @@ function fetchLinesForStation(station_key) {
             messagesQueue.push({'NEW_DESTINATION_DIRECTION_KEY' : destination.direction});
           });
         });
-        messagesQueue.push({'END_STATIONS_KEY' : 1});
+        messagesQueue.push({'END_DESTINATIONS_KEY' : 1});
 
         sendNextMessage();
       } 

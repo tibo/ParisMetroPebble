@@ -22,7 +22,7 @@ void message_received(DictionaryIterator *iter, void *context) {
       }
       case END_STATIONS_KEY: {
         if (tuple->value->uint8 > 0) {
-          APP_LOG(APP_LOG_LEVEL_DEBUG, "reloading menu layer");
+          APP_LOG(APP_LOG_LEVEL_DEBUG, "reloading stations menu layer");
           menu_layer_reload_data(stationsMenuLayer);
         }
         break;
@@ -53,7 +53,7 @@ void message_received(DictionaryIterator *iter, void *context) {
       }
       case END_DESTINATIONS_KEY : {
         if (tuple->value->uint8 > 0) {
-          APP_LOG(APP_LOG_LEVEL_DEBUG, "reloading menu layer");
+          APP_LOG(APP_LOG_LEVEL_DEBUG, "reloading destinations menu layer");
           menu_layer_reload_data(destinationsMenuLayer);
         }
         break;
