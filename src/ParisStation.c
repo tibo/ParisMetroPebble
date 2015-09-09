@@ -8,54 +8,47 @@ void message_received(DictionaryIterator *iter, void *context) {
   while (tuple) {
     switch(tuple->key){
       case NEW_STATION_KEY: {
-        if (strlen(tuple->value->cstring) > 0) {
-          APP_LOG(APP_LOG_LEVEL_DEBUG, "new station key: %s", tuple->value->cstring);
-          snprintf(stations[stationsIndex].key, sizeof(stations[stationsIndex]), tuple->value->cstring);
-        }
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "new station key: %s", tuple->value->cstring);
+        stations[stationsIndex].key = malloc(sizeof(char [strlen(tuple->value->cstring)+1]));
+        strcpy(stations[stationsIndex].key, tuple->value->cstring);
         break;
       }
       case NEW_STATION_NAME: {
         APP_LOG(APP_LOG_LEVEL_DEBUG, "new station name: %s", tuple->value->cstring);
-        snprintf(stations[stationsIndex].name, sizeof(stations[stationsIndex]), tuple->value->cstring);
+        stations[stationsIndex].name = malloc(sizeof(char [strlen(tuple->value->cstring)+1]));
+        strcpy(stations[stationsIndex].name, tuple->value->cstring);
         stationsIndex++;
         break;
       }
       case END_STATIONS_KEY: {
-        if (tuple->value->uint8 > 0) {
-          APP_LOG(APP_LOG_LEVEL_DEBUG, "reloading stations menu layer");
-          menu_layer_reload_data(stationsMenuLayer);
-        }
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "reloading stations menu layer");
+        menu_layer_reload_data(stationsMenuLayer);
         break;
       }
       case NEW_LINE_KEY : {
-        if (strlen(tuple->value->cstring) > 0) {
-          APP_LOG(APP_LOG_LEVEL_DEBUG, "new line: %s", tuple->value->cstring);
-          snprintf(lines[linesIndex].name, sizeof(lines[linesIndex]), tuple->value->cstring);
-          linesIndex++;
-          directionsIndex = 0;
-        }
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "new line: %s length: %i %i", tuple->value->cstring, strlen(tuple->value->cstring), sizeof(char [strlen(tuple->value->cstring)]));
+        lines[linesIndex].name = malloc(sizeof(char [strlen(tuple->value->cstring)+1]));
+        strcpy(lines[linesIndex].name, tuple->value->cstring);
+        linesIndex++;
+        directionsIndex = 0;
         break;
       }
       case NEW_DESTINATION_NAME_KEY : {
-        if (strlen(tuple->value->cstring) > 0) {
-          APP_LOG(APP_LOG_LEVEL_DEBUG, "new destination name: %s", tuple->value->cstring);
-          snprintf(lines[linesIndex-1].destinations[directionsIndex].name, sizeof(lines[linesIndex-1].destinations[directionsIndex]), tuple->value->cstring);
-        }
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "new destination name: %s length: %i %i", tuple->value->cstring, strlen(tuple->value->cstring), sizeof(char [strlen(tuple->value->cstring)]));
+        lines[linesIndex-1].destinations[directionsIndex].name = malloc(sizeof(char [strlen(tuple->value->cstring)+1]));
+        strcpy(lines[linesIndex-1].destinations[directionsIndex].name, tuple->value->cstring);
         break;
       }
       case NEW_DESTINATION_DIRECTION_KEY : {
-        if (strlen(tuple->value->cstring) > 0) {
-          APP_LOG(APP_LOG_LEVEL_DEBUG, "new destination: %s", tuple->value->cstring);
-          snprintf(lines[linesIndex-1].destinations[directionsIndex].direction, sizeof(lines[linesIndex-1].destinations[directionsIndex]), tuple->value->cstring);
-          directionsIndex++;
-        }
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "new destination: %s", tuple->value->cstring);
+        lines[linesIndex-1].destinations[directionsIndex].direction = malloc(sizeof(char [strlen(tuple->value->cstring)+1]));
+        strcpy(lines[linesIndex-1].destinations[directionsIndex].direction, tuple->value->cstring);
+        directionsIndex++;
         break;
       }
       case END_DESTINATIONS_KEY : {
-        if (tuple->value->uint8 > 0) {
-          APP_LOG(APP_LOG_LEVEL_DEBUG, "reloading destinations menu layer");
-          menu_layer_reload_data(destinationsMenuLayer);
-        }
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "reloading destinations menu layer");
+        menu_layer_reload_data(destinationsMenuLayer);
         break;
       }
       default: {

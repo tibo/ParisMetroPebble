@@ -36,6 +36,8 @@ function fetchStations(latitude, longitude) {
   if (latitude && longitude) {
     url = url + '?ll=' + latitude + ',' + longitude + '&limit=5';
   }
+  // debug Chatelet
+  // url = url + '?ll=48.858706,2.347456&limit=1';
 
   var req = new XMLHttpRequest();
   req.open('GET', url, true);

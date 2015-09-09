@@ -1,6 +1,6 @@
 #include <pebble.h>
 
 typedef struct {
-  char name[32];
-  char key[32];
+  char *name;
+  char *key;
 } __attribute__((packed)) Station;

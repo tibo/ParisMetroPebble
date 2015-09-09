@@ -1,11 +1,11 @@
 #include <pebble.h>
 
 typedef struct {
-  char name[32];
-  char direction[1];
+  char *name;
+  char *direction;
 } __attribute__((packed)) Destination;
 
 typedef struct {
-  char name[2];
+  char *name;
   Destination destinations[2];
 } __attribute__((packed)) Line;
