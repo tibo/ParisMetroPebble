@@ -34,7 +34,7 @@ static void destinations_menu_draw_row_callback(GContext* ctx, const Layer *cell
 
 static void destinations_menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *data) {
   // APP_LOG(APP_LOG_LEVEL_DEBUG, "Select %i", cell_index->row);
-  Window *schedulesWindow = init_schedules_window(lines[cell_index->section].destinations[cell_index->row].direction);
+  Window *schedulesWindow = init_schedules_window(lines[cell_index->section].name, lines[cell_index->section].destinations[cell_index->row].direction);
   window_stack_push(schedulesWindow, true);
 }
 

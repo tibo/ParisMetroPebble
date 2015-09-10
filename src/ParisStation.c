@@ -51,6 +51,24 @@ void message_received(DictionaryIterator *iter, void *context) {
         menu_layer_reload_data(destinationsMenuLayer);
         break;
       }
+      case NEW_SCHEDULE_DESTINATION_KEY : {
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "new schedule destination: %s", tuple->value->cstring);
+        schedules[schedulesIndex].name = malloc(sizeof(char [strlen(tuple->value->cstring)+1]));
+        strcpy(schedules[schedulesIndex].name, tuple->value->cstring);
+        break;
+      }
+      case NEW_SCHEDULE_TIME_KEY : {
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "new schedule time: %s", tuple->value->cstring);
+        schedules[schedulesIndex].arriving = malloc(sizeof(char [strlen(tuple->value->cstring)+1]));
+        strcpy(schedules[schedulesIndex].arriving, tuple->value->cstring);
+        schedulesIndex++;
+        break;
+      }
+      case END_SCHEDULES_KEY : {
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "reloading schedules menu layer");
+        menu_layer_reload_data(schedulesMenuLayer);
+        break;
+      }
       default: {
         APP_LOG(APP_LOG_LEVEL_DEBUG, "Unkown key %d", (int)tuple->key);
         APP_LOG(APP_LOG_LEVEL_DEBUG, "String value: %s", tuple->value->cstring);
