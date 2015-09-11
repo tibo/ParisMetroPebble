@@ -1,4 +1,5 @@
 #include <pebble.h>
+#include "models.h"
 #include "StationsWindow.c.inc"
 #include "appmessage.h"
 
@@ -9,15 +10,13 @@ void message_received(DictionaryIterator *iter, void *context) {
     switch(tuple->key){
       case NEW_STATION_KEY: {
         APP_LOG(APP_LOG_LEVEL_DEBUG, "new station key: %s", tuple->value->cstring);
-        stations[stationsIndex].key = malloc(sizeof(char [strlen(tuple->value->cstring)+1]));
-        strcpy(stations[stationsIndex].key, tuple->value->cstring);
+        Station station = initStationWithKey(tuple->value->cstring);
+        pushStation(&stations, &station);
         break;
       }
       case NEW_STATION_NAME: {
         APP_LOG(APP_LOG_LEVEL_DEBUG, "new station name: %s", tuple->value->cstring);
-        stations[stationsIndex].name = malloc(sizeof(char [strlen(tuple->value->cstring)+1]));
-        strcpy(stations[stationsIndex].name, tuple->value->cstring);
-        stationsIndex++;
+        setStationName(&stations.stations[stations.count-1], tuple->value->cstring);
         break;
       }
       case END_STATIONS_KEY: {

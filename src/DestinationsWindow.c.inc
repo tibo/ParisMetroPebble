@@ -1,5 +1,4 @@
 #include "appmessage.h"
-#include "line.h"
 #include "SchedulesWindow.c.inc"
 
 static Window *destinationsWindow;

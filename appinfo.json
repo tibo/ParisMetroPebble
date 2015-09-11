@@ -9,6 +9,9 @@
   "watchapp": {
     "watchface": false
   },
+  "capabilities": [
+    "location"
+  ],
   "appKeys": {
     "NEW_STATION_KEY": 0,
     "NEW_STATION_NAME": 1,

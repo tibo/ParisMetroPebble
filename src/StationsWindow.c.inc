@@ -1,11 +1,9 @@
 #include "DestinationsWindow.c.inc"
-#include "station.h"
 
 static Window *stationsWindow;
 static MenuLayer *stationsMenuLayer;
 
-static Station stations[5]; 
-static int stationsIndex = 0;
+static StationsArray stations;
 
 // menu layer
 static uint16_t stations_menu_get_num_sections_callback(MenuLayer *menu_layer, void *data) {
@@ -13,7 +11,7 @@ static uint16_t stations_menu_get_num_sections_callback(MenuLayer *menu_layer, v
 }
 
 static uint16_t stations_menu_get_num_rows_callback(MenuLayer *menu_layer, uint16_t section_index, void *data) {
-  return ARRAY_LENGTH(stations);
+  return stations.count;
 }
 
 static int16_t stations_menu_get_header_height_callback(MenuLayer *menu_layer, uint16_t section_index, void *data) {
@@ -25,17 +23,18 @@ static void stations_menu_draw_header_callback(GContext* ctx, const Layer *cell_
 }
 
 static void stations_menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuIndex *cell_index, void *data) {
-  menu_cell_title_draw(ctx, cell_layer, stations[cell_index->row].name);
+  menu_cell_title_draw(ctx, cell_layer, stations.stations[cell_index->row].name);
 }
 
 static void stations_menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *data) {
-  // APP_LOG(APP_LOG_LEVEL_DEBUG, "Select %i", cell_index->row);
-  Window *destinationsWindow = init_destinations_window(stations[cell_index->row].key);
+  Window *destinationsWindow = init_destinations_window(stations.stations[cell_index->row].key);
   window_stack_push(destinationsWindow, true);
 }
 
 // window
 static void stations_window_load(Window *window) {
+  stations = initStationsArray();
+
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_bounds(window_layer);
 
@@ -56,6 +55,7 @@ static void stations_window_load(Window *window) {
 }
 
 static void stations_window_unload(Window *window) {
+  destroyStationsArray(&stations);
   menu_layer_destroy(stationsMenuLayer);
   window_destroy(window);
 }

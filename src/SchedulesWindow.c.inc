@@ -1,5 +1,4 @@
 #include "appmessage.h"
-#include "schedule.h"
 
 static Window *schedulesWindow;
 static MenuLayer *schedulesMenuLayer;
