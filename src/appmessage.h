@@ -8,8 +8,8 @@
 
 // destinations callback
 #define NEW_LINE_KEY 4
-#define NEW_DESTINATION_NAME_KEY 5
-#define NEW_DESTINATION_DIRECTION_KEY 6
+#define NEW_DESTINATION_DIRECTION_KEY 5
+#define NEW_DESTINATION_NAME_KEY 6
 #define END_DESTINATIONS_KEY 7
 
 // schedules

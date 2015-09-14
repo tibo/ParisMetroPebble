@@ -6,12 +6,11 @@ static MenuLayer *schedulesMenuLayer;
 static char *direction;
 static char *line;
 
-static Schedule schedules[4];
-static int schedulesIndex;
+static SchedulesArray schedules;
 
 // menu layer
 static uint16_t schedules_menu_get_num_sections_callback(MenuLayer *menu_layer, void *data) {
-  return ARRAY_LENGTH(schedules);
+  return schedules.count;
 }
 
 static uint16_t schedules_menu_get_num_rows_callback(MenuLayer *menu_layer, uint16_t section_index, void *data) {
@@ -23,11 +22,15 @@ static int16_t schedules_menu_get_header_height_callback(MenuLayer *menu_layer, 
 }
 
 static void schedules_menu_draw_header_callback(GContext* ctx, const Layer *cell_layer, uint16_t section_index, void *data) {
-  menu_cell_basic_header_draw(ctx, cell_layer, schedules[section_index].name);
+  if (schedules.count) {
+    menu_cell_basic_header_draw(ctx, cell_layer, schedules.schedules[section_index].name);
+  }
 }
 
 static void schedules_menu_draw_row_callback(GContext* ctx, const Layer *cell_layer, MenuIndex *cell_index, void *data) {
-  menu_cell_title_draw(ctx, cell_layer, schedules[cell_index->section].arriving);
+  if (schedules.count) {
+    menu_cell_title_draw(ctx, cell_layer, schedules.schedules[cell_index->section].arriving);
+  }
 }
 
 static void schedules_menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *data) {
@@ -37,6 +40,7 @@ static void schedules_menu_select_callback(MenuLayer *menu_layer, MenuIndex *cel
 // window
 static void schedules_window_load(Window *window) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "schedules window for line %s direction %s", line, direction);
+  schedules = initSchedulesArray();
 
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_bounds(window_layer);
@@ -56,8 +60,6 @@ static void schedules_window_load(Window *window) {
 
   layer_add_child(window_layer, menu_layer_get_layer(schedulesMenuLayer));
 
-  schedulesIndex = 0;
-
   DictionaryIterator *outbox;
   app_message_outbox_begin(&outbox);
   dict_write_cstring(outbox, SELECTED_DIRECTION_KEY, direction);
@@ -66,7 +68,9 @@ static void schedules_window_load(Window *window) {
 }
 
 static void schedules_window_unload(Window *window) {
-  window_destroy(window);
+  destroySchedulesArray(&schedules);
+  menu_layer_destroy(schedulesMenuLayer);
+  // window_destroy(window);
 }
 
 // init

@@ -83,8 +83,8 @@ function fetchLinesForStation(station_key) {
           messagesQueue.push({'NEW_LINE_KEY' : line.line});
           var destinations = line['destinations'];
           destinations.forEach(function(destination){
-            messagesQueue.push({'NEW_DESTINATION_NAME_KEY' : destination.name});
             messagesQueue.push({'NEW_DESTINATION_DIRECTION_KEY' : destination.direction});
+            messagesQueue.push({'NEW_DESTINATION_NAME_KEY' : destination.name});
           });
         });
         messagesQueue.push({'END_DESTINATIONS_KEY' : 1});

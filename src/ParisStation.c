@@ -26,23 +26,20 @@ void message_received(DictionaryIterator *iter, void *context) {
       }
       case NEW_LINE_KEY : {
         APP_LOG(APP_LOG_LEVEL_DEBUG, "new line: %s length: %i %i", tuple->value->cstring, strlen(tuple->value->cstring), sizeof(char [strlen(tuple->value->cstring)]));
-        lines[linesIndex].name = malloc(sizeof(char [strlen(tuple->value->cstring)+1]));
-        strcpy(lines[linesIndex].name, tuple->value->cstring);
-        linesIndex++;
-        directionsIndex = 0;
-        break;
-      }
-      case NEW_DESTINATION_NAME_KEY : {
-        APP_LOG(APP_LOG_LEVEL_DEBUG, "new destination name: %s length: %i %i", tuple->value->cstring, strlen(tuple->value->cstring), sizeof(char [strlen(tuple->value->cstring)]));
-        lines[linesIndex-1].destinations[directionsIndex].name = malloc(sizeof(char [strlen(tuple->value->cstring)+1]));
-        strcpy(lines[linesIndex-1].destinations[directionsIndex].name, tuple->value->cstring);
+        Line line = initLine(tuple->value->cstring);
+        pushLine(&lines, &line);
         break;
       }
       case NEW_DESTINATION_DIRECTION_KEY : {
         APP_LOG(APP_LOG_LEVEL_DEBUG, "new destination: %s", tuple->value->cstring);
-        lines[linesIndex-1].destinations[directionsIndex].direction = malloc(sizeof(char [strlen(tuple->value->cstring)+1]));
-        strcpy(lines[linesIndex-1].destinations[directionsIndex].direction, tuple->value->cstring);
-        directionsIndex++;
+        Destination destination = initDestinationWithKey(tuple->value->cstring);
+        pushDestination(&lines.lines[lines.count-1].destinations, &destination);
+        break;
+      }
+      case NEW_DESTINATION_NAME_KEY : {
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "new destination name: %s length: %i %i", tuple->value->cstring, strlen(tuple->value->cstring), sizeof(char [strlen(tuple->value->cstring)]));
+        int destinationIndex = lines.lines[lines.count-1].destinations.count-1;
+        setDestinationName(&lines.lines[lines.count-1].destinations.destinations[destinationIndex], tuple->value->cstring);
         break;
       }
       case END_DESTINATIONS_KEY : {
@@ -52,15 +49,13 @@ void message_received(DictionaryIterator *iter, void *context) {
       }
       case NEW_SCHEDULE_DESTINATION_KEY : {
         APP_LOG(APP_LOG_LEVEL_DEBUG, "new schedule destination: %s", tuple->value->cstring);
-        schedules[schedulesIndex].name = malloc(sizeof(char [strlen(tuple->value->cstring)+1]));
-        strcpy(schedules[schedulesIndex].name, tuple->value->cstring);
+        Schedule schedule = initScheduleWithDestination(tuple->value->cstring);
+        pushSchedule(&schedules, &schedule);
         break;
       }
       case NEW_SCHEDULE_TIME_KEY : {
         APP_LOG(APP_LOG_LEVEL_DEBUG, "new schedule time: %s", tuple->value->cstring);
-        schedules[schedulesIndex].arriving = malloc(sizeof(char [strlen(tuple->value->cstring)+1]));
-        strcpy(schedules[schedulesIndex].arriving, tuple->value->cstring);
-        schedulesIndex++;
+        setScheduleTime(&schedules.schedules[schedules.count-1], tuple->value->cstring);
         break;
       }
       case END_SCHEDULES_KEY : {

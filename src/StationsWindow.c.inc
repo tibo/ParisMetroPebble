@@ -57,7 +57,7 @@ static void stations_window_load(Window *window) {
 static void stations_window_unload(Window *window) {
   destroyStationsArray(&stations);
   menu_layer_destroy(stationsMenuLayer);
-  window_destroy(window);
+  // window_destroy(window);
 }
 
 // init
