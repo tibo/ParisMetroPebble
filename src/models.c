@@ -146,5 +146,7 @@ void pushSchedule(SchedulesArray *schedulesArray, Schedule *schedule)
 
 void destroySchedulesArray(SchedulesArray *schedulesArray)
 {
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "destroying schedule array %p",schedulesArray);
   schedulesArray->count = 0;
+  free(schedulesArray->schedules);
 }

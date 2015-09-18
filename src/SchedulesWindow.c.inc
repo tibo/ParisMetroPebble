@@ -10,6 +10,7 @@ static SchedulesArray schedules;
 
 // menu layer
 static uint16_t schedules_menu_get_num_sections_callback(MenuLayer *menu_layer, void *data) {
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "schedules.count: %i",schedules.count);
   return schedules.count;
 }
 
@@ -40,7 +41,6 @@ static void schedules_menu_select_callback(MenuLayer *menu_layer, MenuIndex *cel
 // window
 static void schedules_window_load(Window *window) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "schedules window for line %s direction %s", line, direction);
-  schedules = initSchedulesArray();
 
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_bounds(window_layer);
@@ -77,6 +77,12 @@ static void schedules_window_unload(Window *window) {
 Window *init_schedules_window(char *lineKey, char *directionKey) {
   line = lineKey;
   direction = directionKey;
+
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "schedules.count at load: %i",schedules.count);
+  schedules = initSchedulesArray();
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "schedules.count at load after init: %i",schedules.count);
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "init schedule array %p",&schedules);
+
   schedulesWindow = window_create();
   window_set_window_handlers(schedulesWindow, (WindowHandlers) {
     .load = schedules_window_load,

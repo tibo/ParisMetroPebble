@@ -49,6 +49,7 @@ void message_received(DictionaryIterator *iter, void *context) {
       }
       case NEW_SCHEDULE_DESTINATION_KEY : {
         APP_LOG(APP_LOG_LEVEL_DEBUG, "new schedule destination: %s", tuple->value->cstring);
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "schedules.count: %i",schedules.count);
         Schedule schedule = initScheduleWithDestination(tuple->value->cstring);
         pushSchedule(&schedules, &schedule);
         break;
