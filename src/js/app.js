@@ -82,6 +82,11 @@ function showError(error_message){
 
 function setupStationsList(stations){
   var stations_list = new UI.Menu({
+    fullscreen: true,
+    backgroundColor: 'white',
+    textColor: 'black',
+    highlightBackgroundColor: 'cadetBlue',
+    highlightTextColor: 'white',
     sections: [{
       title: 'Nearby',
       items: stations
@@ -114,6 +119,11 @@ function setupStationsList(stations){
 
 function setupLinesList(lines){
   var lines_list = new UI.Menu({
+    fullscreen: true,
+    backgroundColor: 'white',
+    textColor: 'black',
+    highlightBackgroundColor: 'cadetBlue',
+    highlightTextColor: 'white',
     sections: lines
   });
   
@@ -139,6 +149,11 @@ function setupLinesList(lines){
 
 function setupSchedulesList(schedules){
   var schedule_list = new UI.Menu({
+    fullscreen: true,
+    backgroundColor: 'white',
+    textColor: 'black',
+    highlightBackgroundColor: 'cadetBlue',
+    highlightTextColor: 'white',
     sections: schedules
   });
   
