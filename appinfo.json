@@ -1,12 +1,12 @@
 {
-  "uuid": "133215f0-cf20-4c05-997b-3c9be5a64e5b",
-  "shortName": "Pebble.js",
-  "longName": "Pebble.js",
-  "companyName": "Meiguro",
+  "uuid": "41cb57ce-a0f2-4dad-89e6-dd779fc33f38",
+  "shortName": "Paris Metro",
+  "longName": "Paris Metro",
+  "companyName": "Thibaut LE LEVIER",
   "versionCode": 1,
-  "versionLabel": "0.4",
+  "versionLabel": "0.1",
   "capabilities": [
-    "configurable"
+    "location"
   ],
   "watchapp": {
     "watchface": false
