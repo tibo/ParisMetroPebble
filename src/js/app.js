@@ -134,12 +134,22 @@ function setupLinesList(lines){
       var ui_schedules = Array();
       
       schedules.forEach(function(schedule){
-        ui_schedules.push({
-          'title' : schedule.destination,
-          'items' : [{
-            'title' : schedule.arriving
-          }]
-        });
+        if (schedule.arriving) {
+          ui_schedules.push({
+            'title' : schedule.destination,
+            'items' : [{
+              'title' : schedule.arriving
+            }]
+          });
+        }
+        else {
+          ui_schedules.push({
+            'title' : '',
+            'items' : [{
+              'title' : schedule.destination
+            }]
+          });
+        }
       });
       
       setupSchedulesList(ui_schedules);
