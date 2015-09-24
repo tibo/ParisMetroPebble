@@ -85,7 +85,7 @@ function setupStationsList(stations){
     fullscreen: true,
     backgroundColor: 'white',
     textColor: 'black',
-    highlightBackgroundColor: 'cadetBlue',
+    highlightBackgroundColor: 'tiffanyBlue',
     highlightTextColor: 'white',
     sections: [{
       title: 'Nearby',
@@ -122,7 +122,7 @@ function setupLinesList(lines){
     fullscreen: true,
     backgroundColor: 'white',
     textColor: 'black',
-    highlightBackgroundColor: 'cadetBlue',
+    highlightBackgroundColor: 'tiffanyBlue',
     highlightTextColor: 'white',
     sections: lines
   });
@@ -162,7 +162,7 @@ function setupSchedulesList(schedules){
     fullscreen: true,
     backgroundColor: 'white',
     textColor: 'black',
-    highlightBackgroundColor: 'cadetBlue',
+    highlightBackgroundColor: 'tiffanyBlue',
     highlightTextColor: 'white',
     sections: schedules
   });
