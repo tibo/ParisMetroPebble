@@ -5,10 +5,13 @@ var baseURL = 'https://secure-atoll-4691.herokuapp.com';
 
 function fetchStations(latitude, longitude, callback) {
 
-  var url = baseURL + '/metro/stations';
+  var url = baseURL + '/stations';
 
   if (latitude && longitude) {
-    url = url + '?ll=' + latitude + ',' + longitude + '&limit=5';
+    url = url + '?ll=' + latitude + ',' + longitude + '&limit=5&device=pebble';
+  }
+  else {
+    url = url + '?device=pebble';
   }
   
   var req = new XMLHttpRequest();
@@ -80,7 +83,7 @@ function showError(error_message){
   card.show();
 }
 
-function setupStationsList(stations){
+function showStationsList(stations){
   var stations_list = new UI.Menu({
     fullscreen: true,
     backgroundColor: 'white',
@@ -173,27 +176,14 @@ function setupSchedulesList(schedules){
 // geolocation
 function locationSuccess(pos) {
   fetchStations(pos.coords.latitude, pos.coords.longitude, function(stations){
-    formatStations(stations);
+    showStationsList(stations);
   });
 }
 
 function locationError(err) {
   fetchStations(null, null, function(stations){
-    formatStations(stations);
+    showStationsList(stations);
   });
-}
-
-function formatStations(stations){
-  var ui_stations = Array();
-    
-    stations.forEach(function(station){
-      ui_stations.push({
-        'title': station.name,
-        'key': station.key
-      });
-    });
-    
-    setupStationsList(ui_stations);
 }
 
 var locationOptions = {
