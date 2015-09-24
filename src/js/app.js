@@ -73,6 +73,13 @@ function fetchSchedules(station_key, line, direction, callback) {
 }
 
 // UI
+var loadingScreen = new UI.Card({
+  fullscreen: true,
+  title: 'Paris Metro',
+  body: 'Loading...',
+  scrollable: false
+});
+
 function showError(error_message){
   var card = new UI.Card({
     title: 'Error',
@@ -98,7 +105,8 @@ function showStationsList(stations){
   
   stations_list.show();
   
-  stations_list.on('select', function(e) {    
+  stations_list.on('select', function(e) {
+    loadingScreen.show();
     fetchLinesForStation(e.item.key, function(lines, error){
       var ui_lines = Array();
       
@@ -130,9 +138,11 @@ function setupLinesList(lines){
     sections: lines
   });
   
+  loadingScreen.hide();
   lines_list.show();
   
-  lines_list.on('select', function(e) {    
+  lines_list.on('select', function(e) {
+    loadingScreen.show();
     fetchSchedules(e.section.station_key, e.section.title, e.item.direction, function(schedules, error){
       var ui_schedules = Array();
       
@@ -170,25 +180,29 @@ function setupSchedulesList(schedules){
     sections: schedules
   });
   
+  loadingScreen.hide();
   schedule_list.show();
 }
 
 // geolocation
 function locationSuccess(pos) {
   fetchStations(pos.coords.latitude, pos.coords.longitude, function(stations){
+    loadingScreen.hide();
     showStationsList(stations);
   });
 }
 
 function locationError(err) {
   fetchStations(null, null, function(stations){
+    loadingScreen.hide();
     showStationsList(stations);
   });
 }
+
+loadingScreen.show();
 
 var locationOptions = {
   'timeout': 15000,
   'maximumAge': 60000
 };
-
 window.navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
