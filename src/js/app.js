@@ -1,80 +1,14 @@
 var UI = require('ui');
+var ui_helpers = require('ui_helpers');
+var API = require('paris_transport_API');
 
-// API
-var baseURL = 'https://secure-atoll-4691.herokuapp.com';
-
-function fetchStations(latitude, longitude, callback) {
-
-  var url = baseURL + '/stations';
-
-  if (latitude && longitude) {
-    url = url + '?ll=' + latitude + ',' + longitude + '&limit=5&device=pebble';
-  }
-  else {
-    url = url + '?device=pebble';
-  }
-  
-  var req = new XMLHttpRequest();
-  req.open('GET', url, true);
-  req.onload = function () {
-    if (req.readyState === 4) {
-      if (req.status === 200) {
-        var response = JSON.parse(req.responseText);
-        var stations = response.stations;
-        callback(stations);
-      } 
-      else {
-        showError(null);
-      }
-    }
-  };
-  req.send(null);
-}
-
-function fetchLinesForStation(station_key, callback) {
-  var url = baseURL + '/metro/stations/' + station_key.replace(/ /g,'%20') + '/lines';
-
-  var req = new XMLHttpRequest();
-  req.open('GET', url, true);
-  req.onload = function () {
-    if (req.readyState === 4) {
-      if (req.status === 200) {
-        var response = JSON.parse(req.responseText);
-        var lines = response.lines;
-        callback(lines);
-      } 
-      else {
-        showError(null);
-      }
-    }
-  };
-  req.send(null);
-}
-
-function fetchSchedules(station_key, line, direction, callback) {
-
-  var url = baseURL + '/metro/stations/' + station_key.replace(/ /g,'%20') + '/lines/' + line + '/directions/' + direction + '/schedules';
-
-  var req = new XMLHttpRequest();
-  req.open('GET', url, true);
-  req.onload = function () {
-    if (req.readyState === 4) {
-      if (req.status === 200) {
-        var response = JSON.parse(req.responseText);
-        var schedules = response.schedules;
-        callback(schedules);
-      } 
-      else {
-        showError(null);
-      }
-    }
-  };
-  req.send(null);
-}
+var selected_station;
 
 // UI
 var loadingScreen = new UI.Card({
   fullscreen: true,
+  backgroundColor: ui_helpers.colorForLine(null),
+  textColor: 'white',
   title: 'Paris Metro',
   body: 'Loading...',
   scrollable: false
@@ -82,6 +16,9 @@ var loadingScreen = new UI.Card({
 
 function showError(error_message){
   var card = new UI.Card({
+    fullscreen: true,
+    backgroundColor: 'red',
+    textColor: 'white',
     title: 'Error',
     body: (error_message?error_message:"Something went wrong!"),
     scrollable: false
@@ -95,10 +32,9 @@ function showStationsList(stations){
     fullscreen: true,
     backgroundColor: 'white',
     textColor: 'black',
-    highlightBackgroundColor: 'tiffanyBlue',
+    highlightBackgroundColor: ui_helpers.colorForLine(null),
     highlightTextColor: 'white',
     sections: [{
-      title: 'Nearby',
       items: stations
     }]
   });
@@ -106,103 +42,89 @@ function showStationsList(stations){
   stations_list.show();
   
   stations_list.on('select', function(e) {
+    selected_station = e.item.key;
     loadingScreen.show();
-    fetchLinesForStation(e.item.key, function(lines, error){
-      var ui_lines = Array();
-      
-      lines.forEach(function(line){
-        var l = {'title' : line.line, 'station_key': e.item.key};
-        var items = Array();
-        line.destinations.forEach(function(destination){
-          items.push({
-            'title': destination.name,
-            'direction': destination.direction
-          });
-        });
-        l.items = items;
-        
-        ui_lines.push(l);
-        setupLinesList(ui_lines);
-      });
+    API.fetchLinesForStation(selected_station, function(lines, error){
+      loadingScreen.hide();
+      if(error) {
+        showError(error);
+      }
+      else {
+        showLinesList(lines);
+      }
     });
   });
 }
 
-function setupLinesList(lines){
+function showLinesList(lines){
   var lines_list = new UI.Menu({
     fullscreen: true,
     backgroundColor: 'white',
     textColor: 'black',
-    highlightBackgroundColor: 'tiffanyBlue',
+    highlightBackgroundColor: ui_helpers.colorForLine(null),
     highlightTextColor: 'white',
     sections: lines
   });
   
-  loadingScreen.hide();
   lines_list.show();
   
   lines_list.on('select', function(e) {
     loadingScreen.show();
-    fetchSchedules(e.section.station_key, e.section.title, e.item.direction, function(schedules, error){
-      var ui_schedules = Array();
-      
-      schedules.forEach(function(schedule){
-        if (schedule.arriving) {
-          ui_schedules.push({
-            'title' : schedule.destination,
-            'items' : [{
-              'title' : schedule.arriving
-            }]
-          });
-        }
-        else {
-          ui_schedules.push({
-            'title' : '',
-            'items' : [{
-              'title' : schedule.destination
-            }]
-          });
-        }
-      });
-      
-      setupSchedulesList(ui_schedules);
+    API.fetchSchedules(selected_station, e.section.title, e.item.direction, function(schedules, error){
+      loadingScreen.hide();
+      if (error){
+        showError(error);
+      }
+      else {
+        showSchedulesList(schedules);
+      }
     });
   });
 }
 
-function setupSchedulesList(schedules){
+function showSchedulesList(schedules){
   var schedule_list = new UI.Menu({
     fullscreen: true,
     backgroundColor: 'white',
     textColor: 'black',
-    highlightBackgroundColor: 'tiffanyBlue',
+    highlightBackgroundColor: ui_helpers.colorForLine(null),
     highlightTextColor: 'white',
     sections: schedules
   });
   
-  loadingScreen.hide();
   schedule_list.show();
 }
 
 // geolocation
 function locationSuccess(pos) {
-  fetchStations(pos.coords.latitude, pos.coords.longitude, function(stations){
+  API.fetchStations(pos.coords.latitude, pos.coords.longitude, function(stations, error){
     loadingScreen.hide();
-    showStationsList(stations);
+    if (error){
+      showError(error);
+    }
+    else {
+      showStationsList(stations);  
+    }
+    
   });
 }
 
 function locationError(err) {
-  fetchStations(null, null, function(stations){
+  API.fetchStations(null, null, function(stations, error){
     loadingScreen.hide();
-    showStationsList(stations);
+    if (error) {
+      showError(error);
+    }
+    else {
+      showStationsList(stations);
+    }
   });
 }
 
 loadingScreen.show();
 
 var locationOptions = {
-  'timeout': 15000,
-  'maximumAge': 60000
+  'timeout': 15000
 };
-window.navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
+
+navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
