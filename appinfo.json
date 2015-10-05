@@ -1,5 +1,5 @@
 {
-  "uuid": "3efbd5e2-9997-442c-8f21-9671640900cf",
+  "uuid": "0dea4f30-238d-4b0e-be2f-9087532bb5c7",
   "shortName": "Paris Metro",
   "longName": "Paris Metro",
   "companyName": "Thibaut LE LEVIER",
@@ -18,7 +18,7 @@
         "menuIcon": true,
         "type": "png",
         "name": "IMAGE_MENU_ICON",
-        "file": "images/menu_icon.png"
+        "file": "images/metro.png"
       },
       {
         "type": "png",
