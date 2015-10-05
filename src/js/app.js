@@ -9,10 +9,10 @@ var loadingScreen = new UI.Card({
   fullscreen: true,
   backgroundColor: ui_helpers.colorForLine(null),
   textColor: 'white',
-  title: 'Paris Metro',
   body: 'Loading...',
-  icon: 'IMAGE_MENU_ICON',
-  scrollable: false
+  banner: 'IMAGE_METRO_140',
+  scrollable: false,
+  style: 'mono'
 });
 
 function showError(error_message){
@@ -31,8 +31,8 @@ function showError(error_message){
 function showStationsList(stations){
   var stations_list = new UI.Menu({
     fullscreen: true,
-    backgroundColor: 'white',
-    textColor: 'black',
+    backgroundColor: 'black',
+    textColor: 'white',
     highlightBackgroundColor: ui_helpers.colorForLine(null),
     highlightTextColor: 'white',
     sections: [{
@@ -60,8 +60,8 @@ function showStationsList(stations){
 function showLinesList(lines){
   var lines_list = new UI.Menu({
     fullscreen: true,
-    backgroundColor: 'white',
-    textColor: 'black',
+    backgroundColor: 'black',
+    textColor: 'white',
     highlightBackgroundColor: ui_helpers.colorForLine(null),
     highlightTextColor: 'white',
     sections: lines
@@ -86,8 +86,8 @@ function showLinesList(lines){
 function showSchedulesList(schedules){
   var schedule_list = new UI.Menu({
     fullscreen: true,
-    backgroundColor: 'white',
-    textColor: 'black',
+    backgroundColor: 'black',
+    textColor: 'white',
     highlightBackgroundColor: ui_helpers.colorForLine(null),
     highlightTextColor: 'white',
     sections: schedules
