@@ -11,6 +11,7 @@ var loadingScreen = new UI.Card({
   textColor: 'white',
   title: 'Paris Metro',
   body: 'Loading...',
+  icon: 'IMAGE_MENU_ICON',
   scrollable: false
 });
 
