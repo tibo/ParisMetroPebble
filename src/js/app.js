@@ -11,8 +11,7 @@ var loadingScreen = new UI.Card({
   textColor: 'white',
   body: 'Loading...',
   banner: 'IMAGE_METRO_140',
-  scrollable: false,
-  style: 'mono'
+  scrollable: false
 });
 
 function showError(error_message){
