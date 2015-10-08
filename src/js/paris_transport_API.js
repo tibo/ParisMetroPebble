@@ -27,8 +27,8 @@ parisTransportAPI.fetchStations = function(latitude, longitude, callback) {
     }
   );
 },
-parisTransportAPI.fetchLinesForStation= function(station_key, callback) {
-  var url = baseURL + '/metro/stations/' + station_key.replace(/ /g,'%20') + '/lines?device=pebble';
+parisTransportAPI.fetchLinesForStation= function(type, station_key, callback) {
+  var url = baseURL + '/' + type + '/stations/' + station_key.replace(/ /g,'%20') + '/lines?device=pebble';
   
   ajax(
     {
@@ -43,8 +43,8 @@ parisTransportAPI.fetchLinesForStation= function(station_key, callback) {
     }
   );
 },
-parisTransportAPI.fetchSchedules = function(station_key, line, direction, callback) {
-  var url = baseURL + '/metro/stations/' + station_key.replace(/ /g,'%20') + '/lines/' + line + '/directions/' + direction + '/schedules?device=pebble';
+parisTransportAPI.fetchSchedules = function(type, station_key, line, direction, callback) {
+  var url = baseURL + '/' + type + '/stations/' + station_key.replace(/ /g,'%20') + '/lines/' + line + '/directions/' + direction + '/schedules?device=pebble';
   
   ajax(
     {

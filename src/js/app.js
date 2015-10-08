@@ -3,6 +3,7 @@ var ui_helpers = require('ui_helpers');
 var API = require('paris_transport_API');
 
 var selected_station;
+var selected_station_type;
 
 // UI
 var loadingScreen = new UI.Card({
@@ -43,8 +44,9 @@ function showStationsList(stations){
   
   stations_list.on('select', function(e) {
     selected_station = e.item.key;
+    selected_station_type = e.item.type;
     loadingScreen.show();
-    API.fetchLinesForStation(selected_station, function(lines, error){
+    API.fetchLinesForStation(selected_station_type, selected_station, function(lines, error){
       loadingScreen.hide();
       if(error) {
         showError(error);
@@ -70,7 +72,7 @@ function showLinesList(lines){
   
   lines_list.on('select', function(e) {
     loadingScreen.show();
-    API.fetchSchedules(selected_station, e.section.title, e.item.direction, function(schedules, error){
+    API.fetchSchedules(selected_station_type, selected_station, e.section.title, e.item.direction, function(schedules, error){
       loadingScreen.hide();
       if (error){
         showError(error);
