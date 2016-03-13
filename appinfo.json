@@ -1,45 +1,46 @@
 {
-  "uuid": "0dea4f30-238d-4b0e-be2f-9087532bb5c7",
-  "shortName": "Paris Metro",
-  "longName": "Paris Metro",
-  "companyName": "Thibaut LE LEVIER",
-  "versionCode": 1,
-  "versionLabel": "0.1",
+  "appKeys": {},
   "capabilities": [
     "location"
   ],
-  "watchapp": {
-    "watchface": false
-  },
-  "appKeys": {},
+  "companyName": "Thibaut LE LEVIER",
+  "longName": "Paris Metro",
   "resources": {
     "media": [
       {
+        "file": "images/metro.png",
         "menuIcon": true,
-        "type": "png",
         "name": "IMAGE_MENU_ICON",
-        "file": "images/metro.png"
+        "type": "png"
       },
       {
-        "type": "png",
+        "file": "images/metro140.png",
         "name": "IMAGE_METRO_140",
-        "file": "images/metro140.png"
+        "type": "png"
       },
       {
-        "type": "png",
+        "file": "images/tile_splash.png",
         "name": "IMAGE_TILE_SPLASH",
-        "file": "images/tile_splash.png"
+        "type": "png"
       },
       {
-        "type": "font",
+        "file": "fonts/UbuntuMono-Regular.ttf",
         "name": "MONO_FONT_14",
-        "file": "fonts/UbuntuMono-Regular.ttf"
+        "type": "font"
       }
     ]
   },
+  "sdkVersion": "3",
+  "shortName": "Paris Metro",
   "targetPlatforms": [
     "aplite",
-    "basalt"
+    "basalt",
+    "chalk"
   ],
-  "sdkVersion": "3"
+  "uuid": "0dea4f30-238d-4b0e-be2f-9087532bb5c7",
+  "versionCode": 1,
+  "versionLabel": "0.1",
+  "watchapp": {
+    "watchface": false
+  }
 }
